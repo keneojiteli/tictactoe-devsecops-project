@@ -2,7 +2,8 @@
 
 ![Screenshot 2025-03-04 at 7 16 48 PM](https://github.com/user-attachments/assets/7ed79f9c-9144-4870-accd-500085a15592)
 
-![image](https://github.com/user-attachments/assets/5b2813a5-f493-4665-8964-77359b5be93a)
+<!--![image](https://github.com/user-attachments/assets/5b2813a5-f493-4665-8964-77359b5be93a)-->
+<img width="1920" height="871" alt="img1" src="https://github.com/user-attachments/assets/6e49c7bb-9376-4133-8c8d-1698497f131f" />
 
 
 ## Features
@@ -57,8 +58,8 @@ The game implements the following rules:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/devsecops-demo.git
-   cd devsecops-demo
+   git clone https://github.com/yourusername/tictactoe-devsecops-project.git
+   cd tictactoe-devsecops-project
    ```
 
 2. Install dependencies:
@@ -75,7 +76,7 @@ The game implements the following rules:
    yarn dev
    ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. On your browser, navigate to `http://localhost:5173`
 
 ## Building for Production
 
