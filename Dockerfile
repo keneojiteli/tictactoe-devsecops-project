@@ -1,15 +1,31 @@
-# Build stage
-FROM node:20-alpine AS build
+# Use an official Node.js runtime as a parent image for building the application
+FROM node:20-alpine as builder
+
+# Set working directory, , it will be created if it doesn't exist
 WORKDIR /app
+
+# Copy package files first to leverage Docker's caching mechanism to the work directory
 COPY package*.json ./
-RUN npm ci
+
+# Install dependencies
+RUN npm ci 
+
+# Copy other application code
 COPY . .
+
+# Build the application
 RUN npm run build
 
-# Production stage
+# production stage
+# Use an official Nginx image to serve the built application
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-# Add nginx configuration if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy the built application from the builder stage to location Nginx serves files from
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+
+# Expose port 80
 EXPOSE 80
+
+# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
