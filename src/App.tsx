@@ -93,22 +93,27 @@ function App() {
     }
   };
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 flex flex-col items-center justify-center p-4">
-      <div className="max-w-4xl w-full bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="p-6 bg-indigo-600 text-white text-center">
-          <h1 className="text-3xl font-bold flex items-center justify-center gap-2">
-            <Award className="h-8 w-8" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-6">
+      <div className="max-w-5xl w-full bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden">
+        
+        {/* Header */}
+        <div className="p-6 bg-gradient-to-r from-teal-600 to-orange-500 text-white text-center">
+          <h1 className="text-4xl font-extrabold tracking-wide flex items-center justify-center gap-2">
+            <Award className="h-8 w-8 text-yellow-300" />
             Tic Tac Toe
           </h1>
-          <p className="text-indigo-200 mt-1">A classic game reimagined</p>
+          <p className="text-gray-100 mt-1 italic">Play smart. Win big. ✨</p>
         </div>
         
-        <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Game section */}
+        {/* Body */}
+        <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Game board */}
           <div className="md:col-span-2 flex flex-col items-center">
             <div className="mb-4 text-center">
-              <h2 className="text-xl font-semibold text-indigo-800">{getStatusMessage()}</h2>
+              <h2 className="text-2xl font-semibold text-teal-400 drop-shadow-md">{getStatusMessage()}</h2>
             </div>
             
             <Board 
@@ -117,27 +122,32 @@ function App() {
               winningLine={winningLine}
             />
             
+            {/* Buttons */}
             <div className="mt-6 flex gap-4">
               <button 
                 onClick={resetGame}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
               >
                 <RefreshCw className="h-4 w-4" />
                 New Game
               </button>
               <button 
                 onClick={resetStats}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-colors"
+                className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105"
               >
                 Reset All
               </button>
             </div>
           </div>
           
-          {/* Stats section */}
+          {/* Sidebar: Scores + History */}
           <div className="flex flex-col gap-6">
-            <ScoreBoard scores={scores} />
-            <GameHistory history={gameHistory} />
+            <div className="bg-gray-800 rounded-xl p-4 shadow-md">
+              <ScoreBoard scores={scores} />
+            </div>
+            <div className="bg-gray-800 rounded-xl p-4 shadow-md overflow-y-auto max-h-80">
+              <GameHistory history={gameHistory} />
+            </div>
           </div>
         </div>
       </div>
@@ -146,3 +156,8 @@ function App() {
 }
 
 export default App;
+
+//         <div className="min-h-screen bg-red-600 flex items-center justify-center">
+//   <h1 className="text-white text-4xl">Hello Tailwind!</h1>
+// </div>
+
