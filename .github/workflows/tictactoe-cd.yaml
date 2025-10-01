@@ -27,7 +27,7 @@ jobs:
       - name: Run tests
         run: npm test || echo "No tests found, would add tests in a real project"
   
-  lint:
-  build:
-  docker:
-  update-deployment:
+  # lint:
+  # build:
+  # docker:
+  # update-deployment:
