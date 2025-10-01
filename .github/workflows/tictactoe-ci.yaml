@@ -114,4 +114,4 @@ jobs:
       #     file: ./Dockerfile
       #     push: true
       #     tags: ${{ secrets.DOCKER_USERNAME }}/tictactoe:latest
-  update-deployment:
+  # update-deployment:
