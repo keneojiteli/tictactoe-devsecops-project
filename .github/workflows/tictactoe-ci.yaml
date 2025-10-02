@@ -138,8 +138,8 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          # cache-from: type=local,src=/tmp/.buildx-cache
+          # cache-to: type=local,dest=/tmp/.buildx-cache-new
 
       # - name: Upload Trivy scan results
       #   if: always()
