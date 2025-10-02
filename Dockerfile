@@ -79,29 +79,57 @@
 # CMD ["dist/index.js"]
 
 # ---- Build stage ----
-FROM cgr.dev/chainguard/node:latest AS builder
+# FROM cgr.dev/chainguard/node:latest AS builder
+
+# WORKDIR /app
+# COPY package*.json ./
+
+# # Install dependencies (no root, no cache)
+# RUN npm ci --omit=dev
+
+# COPY . .
+
+# # Build app (if using React/Next/etc., otherwise skip)
+# RUN npm run build
+
+# # ---- Runtime stage ----
+# FROM cgr.dev/chainguard/node:latest
+
+# WORKDIR /app
+
+# # Copy only needed files
+# COPY --from=builder /app /app
+
+# EXPOSE 3000
+# USER nonroot:nonroot
+
+# CMD ["node", "server.js"]
+
+# ---- Build stage ----
+FROM cgr.dev/chainguard/node:20-dev AS builder
 
 WORKDIR /app
 COPY package*.json ./
 
-# Install dependencies (no root, no cache)
+# Install dependencies
 RUN npm ci --omit=dev
 
 COPY . .
 
-# Build app (if using React/Next/etc., otherwise skip)
-RUN npm run build
+# Build app (only if you have a build step like React, Next.js, etc.)
+RUN npm run build || echo "No build step found"
 
 # ---- Runtime stage ----
-FROM cgr.dev/chainguard/node:latest
+FROM cgr.dev/chainguard/node:20
 
 WORKDIR /app
 
-# Copy only needed files
+# Copy built app + node_modules
 COPY --from=builder /app /app
 
 EXPOSE 3000
 USER nonroot:nonroot
 
 CMD ["node", "server.js"]
+
 
