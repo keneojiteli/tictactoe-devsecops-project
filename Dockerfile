@@ -1,6 +1,9 @@
 # Use an official Node.js runtime as a parent image for building the application
 FROM node:20-alpine as builder
 
+# Update system packages to latest security patches
+RUN apk upgrade --no-cache
+
 # Set working directory, , it will be created if it doesn't exist
 WORKDIR /app
 
@@ -22,7 +25,6 @@ FROM nginx:alpine
 
 # Copy the built application from the builder stage to location Nginx serves files from
 COPY --from=builder /app/dist /usr/share/nginx/html
-
 
 # Expose port 80
 EXPOSE 80

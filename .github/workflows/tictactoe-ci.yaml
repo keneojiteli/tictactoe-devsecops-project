@@ -132,19 +132,29 @@ jobs:
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
           format: 'table'
+          output: 'trivy-results.sarif'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
 
-      - name: Push docker image if scan passed
-        if: success()  # only if previous steps were successful
-        uses: docker/build-push-action@v5
+      - name: Upload Trivy scan results
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          name: trivy-scan-results
+          path: trivy-results.sarif
+
+      # - name: Push docker image if scan passed
+      #   if: success()  # only if previous steps were successful
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
 
 
   # update-deployment:
