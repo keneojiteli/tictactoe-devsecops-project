@@ -50,30 +50,58 @@
 # CMD ["dist/index.js"]
 
 # Stage 1: Build
-FROM node:20-alpine AS builder
+# FROM node:20-alpine AS builder
+# WORKDIR /app
+
+# # Copy package files and install only prod deps
+# COPY package*.json ./
+# RUN npm ci --only=production
+
+# # Copy source code
+# COPY . .
+
+# # Build your React + Tailwind app (adjust if backend only)
+# RUN npm run build
+
+# # Stage 2: Runtime (Chainguard hardened Node.js)
+# FROM cgr.dev/chainguard/node:20
+
+# WORKDIR /app
+
+# # Copy only the built artifacts + node_modules
+# COPY --from=builder /app/dist ./dist
+# COPY --from=builder /app/node_modules ./node_modules
+
+# # Use non-root user by default (Chainguard enforces this)
+# USER nonroot
+
+# # Start the app
+# CMD ["dist/index.js"]
+
+# ---- Build stage ----
+FROM cgr.dev/chainguard/node:20-dev AS builder
+
 WORKDIR /app
-
-# Copy package files and install only prod deps
 COPY package*.json ./
-RUN npm ci --only=production
 
-# Copy source code
+# Install dependencies (no root, no cache)
+RUN npm ci --omit=dev
+
 COPY . .
 
-# Build your React + Tailwind app (adjust if backend only)
+# Build app (if using React/Next/etc., otherwise skip)
 RUN npm run build
 
-# Stage 2: Runtime (Chainguard hardened Node.js)
+# ---- Runtime stage ----
 FROM cgr.dev/chainguard/node:20
 
 WORKDIR /app
 
-# Copy only the built artifacts + node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+# Copy only needed files
+COPY --from=builder /app /app
 
-# Use non-root user by default (Chainguard enforces this)
-USER nonroot
+EXPOSE 3000
+USER nonroot:nonroot
 
-# Start the app
-CMD ["dist/index.js"]
+CMD ["node", "server.js"]
+
