@@ -93,7 +93,7 @@ COPY . .
 RUN npm run build
 
 # ---- Runtime stage ----
-FROM cgr.dev/chainguard/node:20
+FROM cgr.dev/chainguard/node:latest
 
 WORKDIR /app
 
