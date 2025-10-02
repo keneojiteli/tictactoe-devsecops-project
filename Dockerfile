@@ -2,7 +2,7 @@
 FROM node:20-alpine as builder
 
 # Update system packages to latest security patches
-# RUN apk upgrade --no-cache
+RUN apk update && apk upgrade --no-cache
 
 # Set working directory, , it will be created if it doesn't exist
 WORKDIR /app
