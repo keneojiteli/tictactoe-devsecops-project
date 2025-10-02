@@ -2,7 +2,7 @@
 FROM node:20-alpine as builder
 
 # Update system packages to latest security patches
-RUN apk upgrade --no-cache
+# RUN apk upgrade --no-cache
 
 # Set working directory, , it will be created if it doesn't exist
 WORKDIR /app
@@ -21,13 +21,30 @@ RUN npm run build
 
 # production stage
 # Use an official Nginx image to serve the built application
-FROM nginx:alpine
+# FROM nginx:alpine
 
-# Copy the built application from the builder stage to location Nginx serves files from
-COPY --from=builder /app/dist /usr/share/nginx/html
+# # Copy the built application from the builder stage to location Nginx serves files from
+# COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# # Expose port 80
+# EXPOSE 80
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# # Start Nginx server
+# CMD ["nginx", "-g", "daemon off;"]
+
+# trying out distroless image
+FROM gcr.io/distroless/nodejs20:nonroot
+
+# Set working dir
+WORKDIR /app
+
+# Copy built app from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+
+# Run the app as non-root (already provided by distroless:nonroot)
+USER nonroot
+
+# Start the app
+CMD ["dist/index.js"]
