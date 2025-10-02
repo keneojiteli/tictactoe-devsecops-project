@@ -79,7 +79,7 @@
 # CMD ["dist/index.js"]
 
 # ---- Build stage ----
-FROM cgr.dev/chainguard/node:20-dev AS builder
+FROM cgr.dev/chainguard/node:latest AS builder
 
 WORKDIR /app
 COPY package*.json ./
