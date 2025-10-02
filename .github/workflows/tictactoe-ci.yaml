@@ -1,9 +1,11 @@
-name: "Implementing CI/CD for a Tic Tac Toe Game"
+name: "Implementing CI for a Tic Tac Toe Game"
 on:
   push:
     branches: [ main ]
-    paths-ignore:
-      - 'kubernetes/deployment.yaml'  # Ignore changes to this file to prevent loops
+    paths:
+      - '.github/workflows/tictactoe-ci.yaml'
+    # paths-ignore:
+    #   - 'kubernetes/deployment.yaml'  # Ignore changes to this file to prevent loops
   pull_request:
     branches: [ main ]
 
@@ -75,36 +77,36 @@ jobs:
           name: build-artifacts
           path: dist/
 
-  # docker:
-  #   name: Build & push docker image to a private registry (GHCR)
-  #   runs-on: ubuntu-latest
-  #   needs: [build]
-  #   env:
-  #     REGISTRY: ghcr.io
-  #     IMAGE_NAME: ${{ github.repository }}
-  #     # IMAGE_NAME: ${{ secrets.GITHUB_REPOSITORY }}
-  #   outputs:
-  #     image_tag: ${{ steps.set_output.outputs.image_tag }}
+  docker:
+    name: Build & push image to a private registry (GHCR)
+    runs-on: ubuntu-latest
+    needs: [build]
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+      # IMAGE_NAME: ${{ secrets.GITHUB_REPOSITORY }}
+    outputs:
+      image_tag: ${{ steps.set_output.outputs.image_tag }}
 
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: build-artifacts
-  #         path: dist/
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
 
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  #     - name: Log in to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ${{ env.REGISTRY }}
-  #         username: ${{ github.actor }}
-  #         password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }} # entity triggering the workflow 
+          password: ${{ secrets.GITHUB_TOKEN }}
 
           
       # - name: Build and push Docker image
