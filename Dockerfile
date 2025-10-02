@@ -2,7 +2,9 @@
 FROM node:20-alpine as builder
 
 # Update system packages to latest security patches
-RUN apk update && apk upgrade --no-cache
+# RUN apk update && apk upgrade --no-cache
+RUN apt-get update && apt-get install -y --only-upgrade libexpat1 && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 # Set working directory, , it will be created if it doesn't exist
 WORKDIR /app
