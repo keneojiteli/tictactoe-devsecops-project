@@ -4,6 +4,7 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/tictactoe-ci.yaml'
+      - 'Dockerfile'
     # paths-ignore:
     #   - 'kubernetes/deployment.yaml'  # Ignore changes to this file to prevent loops
   pull_request:
