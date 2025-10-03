@@ -3,6 +3,8 @@
 
 FROM node:20-alpine3.20 as builder
 RUN apk update && apk upgrade --no-cache
+RUN apk add --no-cache expat=2.7.2-r0
+
 
 
 # Update system packages to latest security patches
