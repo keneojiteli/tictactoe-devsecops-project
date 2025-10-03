@@ -1,9 +1,13 @@
 # Use an official Node.js runtime as a parent image for building the application
-FROM node:20-alpine as builder
+# FROM node:20-alpine as builder
+
+FROM node:20-alpine3.20 as builder
+RUN apk update && apk upgrade --no-cache
+
 
 # Update system packages to latest security patches
 # RUN apk update && apk upgrade --no-cache
-RUN apk update && apk upgrade  --no-cache && apk install -y --only-upgrade libexpat1 && apk clean && rm -rf /var/lib/apt/lists/*
+# RUN apk update && apk upgrade  --no-cache && apk install -y --only-upgrade libexpat1 && apk clean && rm -rf /var/lib/apt/lists/*
 
 
 # Set working directory, , it will be created if it doesn't exist
