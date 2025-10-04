@@ -25,16 +25,27 @@ RUN npm run build
 
 # production stage
 # Use an official Nginx image to serve the built application
-FROM nginx:alpine
+# FROM nginx:alpine
 
-# Copy the built application from the builder stage to location Nginx serves files from
-COPY --from=builder /app/dist /usr/share/nginx/html
+# # Copy the built application from the builder stage to location Nginx serves files from
+# COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Expose port 80
-EXPOSE 80
+# # Expose port 80
+# EXPOSE 80
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# # Start Nginx server
+# CMD ["nginx", "-g", "daemon off;"]
+
+FROM cgr.dev/chainguard/node:latest
+
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+
+EXPOSE 3000
+USER nonroot:nonroot
+CMD ["node", "dist/server.js"]
 
 
 
