@@ -4,7 +4,7 @@ on:
     branches: [ main ]
     paths:
       - '.github/workflows/tictactoe-ci.yaml'
-      - 'Dockerfile'
+      # - 'Dockerfile'
     # paths-ignore:
     #   - 'kubernetes/deployment.yaml'  # Ignore changes to this file to prevent loops
   pull_request:
@@ -127,6 +127,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           load: true
+          pull: true
 
       - name: Run vulnerability scan with Trivy
         uses: aquasecurity/trivy-action@master
@@ -138,8 +139,6 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
-          # cache-from: type=local,src=/tmp/.buildx-cache
-          # cache-to: type=local,dest=/tmp/.buildx-cache-new
 
       # - name: Upload Trivy scan results
       #   if: always()
