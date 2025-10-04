@@ -1,6 +1,7 @@
 # Build stage
 # Use an official Node.js runtime as a parent image for building the application
-FROM node:20-alpine AS builder
+# FROM node:20-alpine AS builder
+FROM node:20-alpine3.20 AS builder
 
 # Update system packages to the latest security patches
 RUN apk update && apk upgrade --no-cache 
