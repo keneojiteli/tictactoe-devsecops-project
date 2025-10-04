@@ -1,40 +1,25 @@
-# # Use an official Node.js runtime as a parent image for building the application
-# # FROM node:20-alpine AS builder 22.20-alpine3.21
+# Build stage
+# Use an official Node.js runtime as a parent image for building the application
+FROM node:20-alpine AS builder
 
-# FROM node:20-alpine3.21 AS builder
+# Update system packages to the latest security patches
+RUN apk update && apk upgrade --no-cache 
 
-# # Update system packages to the latest security patches
-# # RUN apk update && apk upgrade --no-cache 
-
-
-# # Set working directory, it will be created if it doesn't exist
-# WORKDIR /app
-
-# # Copy package files first to leverage Docker's caching mechanism to the work directory
-# COPY package*.json ./
-
-# RUN apk update && apk upgrade --no-cache && \
-#     apk add --no-cache expat=2.7.2-r0 && \
-#     apk info -v expat && \
-#     npm ci --omit=dev
-
-# # Install dependencies
-# # RUN npm ci --production
-
-# # Copy other application code
-# COPY . .
-
-# # Build the application
-# RUN npm run build
-
-FROM node:20-alpine3.21 AS builder
-WORKDIR /tmp
-RUN apk add --no-cache build-base curl
-RUN curl -L https://github.com/libexpat/libexpat/releases/download/R_2_7_2/expat-2.7.2.tar.gz | tar xz
-WORKDIR /tmp/expat-2.7.2
-RUN ./configure && make && make install
+# Set working directory, it will be created if it doesn't exist
 WORKDIR /app
-# Continue copying and building your app...
+
+# Copy package files first to leverage Docker's caching mechanism to the work directory
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy other application code
+COPY . .
+
+# Build the application
+RUN npm run build
+
 
 
 # production stage
@@ -50,45 +35,5 @@ EXPOSE 80
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
 
-# ---- Builder stage NEW----
-# FROM node:20-alpine3.20 AS builder
-
-# # Ensure base system packages are patched (fixes expat CVE and others)
-# RUN apk update && apk upgrade --no-cache
-
-# WORKDIR /app
-
-# # Copy only package files first (for efficient Docker caching)
-# COPY package*.json ./
-
-# # Install deps (production + build)
-# RUN npm ci
-
-# # Copy the rest of the source code
-# COPY . .
-
-# # Build the React/TypeScript app
-# RUN npm run build
-
-# # ---- Runtime stage ----
-# FROM node:20-alpine3.20 AS runtime
-
-# # Upgrade OS packages here too (runtime also needs to be patched)
-# RUN apk update && apk upgrade --no-cache
-
-# WORKDIR /app
-
-# # Copy only built files + node_modules from builder
-# COPY --from=builder /app/dist ./dist
-# COPY --from=builder /app/node_modules ./node_modules
-# COPY --from=builder /app/package*.json ./
-
-# EXPOSE 3000
-
-# # Run as non-root for security
-# USER node
-
-# # Adjust if you run a custom server, e.g., "server.js"
-# CMD ["npm", "start"]
 
 
