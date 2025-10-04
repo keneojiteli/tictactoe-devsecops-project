@@ -1,31 +1,41 @@
-# Use an official Node.js runtime as a parent image for building the application
-# FROM node:20-alpine AS builder 22.20-alpine3.21
+# # Use an official Node.js runtime as a parent image for building the application
+# # FROM node:20-alpine AS builder 22.20-alpine3.21
+
+# FROM node:20-alpine3.21 AS builder
+
+# # Update system packages to the latest security patches
+# # RUN apk update && apk upgrade --no-cache 
+
+
+# # Set working directory, it will be created if it doesn't exist
+# WORKDIR /app
+
+# # Copy package files first to leverage Docker's caching mechanism to the work directory
+# COPY package*.json ./
+
+# RUN apk update && apk upgrade --no-cache && \
+#     apk add --no-cache expat=2.7.2-r0 && \
+#     apk info -v expat && \
+#     npm ci --omit=dev
+
+# # Install dependencies
+# # RUN npm ci --production
+
+# # Copy other application code
+# COPY . .
+
+# # Build the application
+# RUN npm run build
 
 FROM node:20-alpine3.21 AS builder
-
-# Update system packages to the latest security patches
-# RUN apk update && apk upgrade --no-cache 
-
-
-# Set working directory, it will be created if it doesn't exist
+WORKDIR /tmp
+RUN apk add --no-cache build-base curl
+RUN curl -L https://github.com/libexpat/libexpat/releases/download/R_2_7_2/expat-2.7.2.tar.gz | tar xz
+WORKDIR /tmp/expat-2.7.2
+RUN ./configure && make && make install
 WORKDIR /app
+# Continue copying and building your app...
 
-# Copy package files first to leverage Docker's caching mechanism to the work directory
-COPY package*.json ./
-
-RUN apk update && apk upgrade --no-cache && \
-    apk add --no-cache expat=2.7.2-r0 && \
-    apk info -v expat && \
-    npm ci --omit=dev
-
-# Install dependencies
-# RUN npm ci --production
-
-# Copy other application code
-COPY . .
-
-# Build the application
-RUN npm run build
 
 # production stage
 # Use an official Nginx image to serve the built application
