@@ -78,6 +78,26 @@ jobs:
           name: build-artifacts
           path: dist/
 
+  sast:
+    name: SAST with sonarqube
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+         fetch-depth: 0
+
+
+      # SonarQube Analysis
+      - name: SonarCloud Scan (build & analyze)
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
+
   docker:
     name: Build & push image to a private registry (GHCR)
     runs-on: ubuntu-latest
@@ -85,7 +105,6 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
-      # IMAGE_NAME: ${{ secrets.GITHUB_REPOSITORY }}
     outputs:
       image_tag: ${{ steps.set_output.outputs.image_tag }}
 
@@ -107,7 +126,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }} # entity triggering the workflow 
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.TOKEN }}
 
       - name: Extract metadata for Docker
         id: meta
@@ -134,18 +153,31 @@ jobs:
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
           format: 'table'
-          # output: 'trivy-results.sarif'
+          output: 'trivy-results.sarif'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
 
-      # - name: Upload Trivy scan results
-      #   if: always()
+      - name: Upload Trivy scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-results
+          path: trivy-results.sarif
+
+      # - name: Generate SBOM (Syft)
+      #   uses: anchore/syft-action@v0.12.0
+      #   with:
+      #     image: ${{ needs.build-and-push.outputs.image-ref }}
+      #     output-format: spdx-json
+      #     output-file: sbom.spdx.json
+
+      # - name: Upload SBOM
       #   uses: actions/upload-artifact@v4
       #   with:
-      #     name: trivy-scan-results
-      #     path: trivy-results.sarif
+      #     name: sbom
+      #     path: sbom.spdx.json
 
       # - name: Push docker image if scan passed
       #   if: success()  # only if previous steps were successful
