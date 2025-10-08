@@ -76,8 +76,8 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            -Dsonar.organization=keneojiteli #github username
-            -Dsonar.projectKey=keneojiteli_tictactoe-devsecops-project #username_reponame
+            -Dsonar.organization=keneojiteli 
+            -Dsonar.projectKey=keneojiteli_tictactoe-devsecops-project 
             -Dsonar.sources=.
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info 
 
