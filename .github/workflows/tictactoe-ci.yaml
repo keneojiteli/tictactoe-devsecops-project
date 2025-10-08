@@ -59,17 +59,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      #   with:
-      #    fetch-depth: 0
 
-      # - name: SonarCloud Scan (build & analyze)
-      #   uses: SonarSource/sonarcloud-github-action@master
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Prepare SonarCloud Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: sonar-${{ runner.os }}-${{ github.sha }}
 
       - name: Run SonarQube Scan
-        # uses: sonarsource/sonarqube-scan-action@v4
-        uses: sonarsource/sonarcloud-github-action@v4.2
+        uses: sonarsource/sonarcloud-github-action@v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
