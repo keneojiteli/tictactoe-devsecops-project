@@ -63,7 +63,6 @@ jobs:
           fetch-depth: 0
 
       - name: Run SonarQube Scan
-        # uses: sonarsource/sonarcloud-github-action@v4
         uses: SonarSource/sonarqube-scan-action@v5.3.1 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -170,27 +169,11 @@ jobs:
           name: trivy-scan-results
           path: trivy-results.sarif
 
-      # - name: Generate SBOM (Syft)
-      #   uses: anchore/syft-action@v0.12.0
-      #   with:
-      #     image: ${{ needs.build-and-push.outputs.image-ref }}
-      #     output-format: spdx-json
-      #     output-file: sbom.spdx.json
-
-      # - name: Upload SBOM
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: sbom
-      #     path: sbom.spdx.json
-
-      # - name: Push docker image if scan passed
-      #   if: success()  # only if previous steps were successful
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-
-
-  # update-deployment:
+      - name: Push docker image if scan passed
+        if: success()  # only if previous steps were successful
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
